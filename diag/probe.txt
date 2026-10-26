@@ -1,0 +1,48 @@
+== https://overpass-api.de/api/interpreter
+200 23857B 37.519385s
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-10-26T10:15:11Z",
+    "copyright": "The data included in this document is from www.op
+== https://overpass.kumi.systems/api/interpreter
+000 0B 40.000781s
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-10-26T10:15:11Z",
+    "copyright": "The data included in this document is from www.op
+== https://overpass.private.coffee/api/interpreter
+000 0B 40.000994s
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-10-26T10:15:11Z",
+    "copyright": "The data included in this document is from www.op
+== https://maps.mail.ru/osm/tools/overpass/api/interpreter
+504 160B 1.165530s
+<html>
+<head><title>504 Gateway Time-out</title></head>
+<body>
+<center><h1>504 Gateway Time-out</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>
+
+== https://overpass.osm.ch/api/interpreter
+200 272B 0.816533s
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.4 2390de5a",
+  "osm3s": {
+    "timestamp_osm_base": "118008",
+    "copyright": "The data included in this document is from www.openstreetmap.org
+== https://download.geofabrik.de/europe/romania-latest.osm.pbf
+HTTP/1.1 307 Temporary Redirect
+Date: Mon, 26 Oct 2026 10:17:53 GMT
+Server: Apache
+Cache-Control: max-age=600, public
+== https://download.bbbike.org/osm/bbbike/Bucharest/Bucharest.osm.pbf
