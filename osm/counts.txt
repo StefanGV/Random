@@ -1,0 +1,12 @@
+    199 tmp/hospitals.geojsonseq
+     55 tmp/metro_con.geojsonseq
+    526 tmp/metro_lines.geojsonseq
+   1207 tmp/metro_plan.geojsonseq
+    241 tmp/metro_st.geojsonseq
+   1896 tmp/parks.geojsonseq
+   2116 tmp/rail.geojsonseq
+  13890 tmp/roads.geojsonseq
+    960 tmp/shops.geojsonseq
+   3482 tmp/tram.geojsonseq
+   1056 tmp/water.geojsonseq
+  25628 total
