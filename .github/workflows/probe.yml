@@ -1,0 +1,18 @@
+name: Probe data sources
+on:
+  push:
+    branches: [bucharest-home-map]
+    paths: [.github/workflows/probe.yml]
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - run: |
+          Q='[out:json][timeout:25];node["railway"="station"]["station"="subway"](44.33,25.95,44.56,26.26);out;'
+          for ep in https://overpass-api.de/api/interpreter https://overpass.kumi.systems/api/interpreter https://overpass.private.coffee/api/interpreter https://maps.mail.ru/osm/tools/overpass/api/interpreter https://overpass.osm.ch/api/interpreter; do
+            echo "== $ep"; curl -s -m 40 -A "bucharest-home-map/1.0" -o /tmp/o.json -w "%{http_code} %{size_download}B %{time_total}s\n" --data-urlencode "data=$Q" "$ep"; head -c 200 /tmp/o.json; echo
+          done
+          for u in https://download.geofabrik.de/europe/romania-latest.osm.pbf https://download.bbbike.org/osm/bbbike/Bucharest/ https://planet.openstreetmap.org/; do
+            echo "== $u"; curl -sI -m 20 "$u" | head -5
+          done
