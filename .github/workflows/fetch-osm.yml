@@ -2,42 +2,46 @@ name: Fetch Bucharest OSM data
 on:
   push:
     branches: [bucharest-home-map]
-    paths: [fetch_osm.py, .github/workflows/fetch-osm.yml]
+    paths: [process_osm.py, .github/workflows/fetch-osm.yml]
   workflow_dispatch:
 permissions:
   contents: write
 jobs:
   fetch:
     runs-on: ubuntu-latest
-    timeout-minutes: 75
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
-      - run: pip install shapely
-      - name: metro
-        run: timeout 900 python -u fetch_osm.py metro
-        continue-on-error: true
-      - name: hospitals
-        run: timeout 600 python -u fetch_osm.py hospitals
-        continue-on-error: true
-      - name: parks
-        run: timeout 900 python -u fetch_osm.py parks
-        continue-on-error: true
-      - name: water
-        run: timeout 600 python -u fetch_osm.py water
-        continue-on-error: true
-      - name: shops
-        run: timeout 600 python -u fetch_osm.py shops
-        continue-on-error: true
-      - name: roads
-        run: timeout 1200 python -u fetch_osm.py roads
-        continue-on-error: true
+      - run: sudo apt-get update -q && sudo apt-get install -y -q osmium-tool && pip install -q shapely
+      - name: Download and cut Bucharest
+        run: |
+          set -e
+          mkdir -p tmp
+          curl -sL -o tmp/ro.pbf https://download.geofabrik.de/europe/romania-latest.osm.pbf
+          ls -la tmp/ro.pbf
+          osmium extract -b 25.95,44.33,26.26,44.56 tmp/ro.pbf -o tmp/buc.pbf --overwrite
+          f() { osmium tags-filter tmp/buc.pbf "${@:2}" -o tmp/$1.pbf --overwrite && osmium export tmp/$1.pbf -f geojsonseq -o tmp/$1.geojsonseq --overwrite; }
+          f metro_st n/station=subway nwr/subway=yes
+          f metro_plan nwr/railway=construction,proposed nwr/construction:railway nwr/proposed:railway
+          f metro_lines w/railway=subway
+          f metro_con w/construction=subway w/proposed=subway
+          f hospitals nwr/amenity=hospital
+          f parks wr/leisure=park wr/landuse=forest
+          f roads w/highway=motorway,trunk,primary,secondary,motorway_link,trunk_link,primary_link,secondary_link
+          f tram w/railway=tram
+          f rail w/railway=rail
+          f water wr/natural=water w/waterway=river
+          f shops nwr/shop=supermarket
+          wc -l tmp/*.geojsonseq
+          python process_osm.py | tee osm/summary.txt || true
       - name: commit
         if: always()
         run: |
           git config user.name "osm-bot"
           git config user.email "osm-bot@users.noreply.github.com"
-          git add osm/ || true
-          git commit -m "Update Bucharest OSM extract (data © OpenStreetMap contributors, ODbL)" || exit 0
-          git push
+          mkdir -p osm; wc -l tmp/*.geojsonseq > osm/counts.txt 2>&1 || true
+          git add osm/
+          git commit -m "Bucharest OSM extract from Geofabrik (data © OpenStreetMap contributors, ODbL)" || exit 0
+          git pull --rebase -q && git push
